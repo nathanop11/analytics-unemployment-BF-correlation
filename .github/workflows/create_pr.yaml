@@ -1,0 +1,31 @@
+name: Create Pull Request to Develop
+
+on:
+  push:
+    branches:
+      - "feature/*" # Aciona para qualquer push em branches que começam com 'feature/'
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git configuration
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Create a pull request to develop
+        run: |
+          # Verifica se já existe um PR para a branch
+          PR_EXISTS=$(gh pr list --state open --head "feature/${GITHUB_REF##*/}" --json number --jq 'length')
+          if [ "$PR_EXISTS" -eq 0 ]; then
+            gh pr create --base develop --head "feature/${GITHUB_REF##*/}" --title "Merge feature/${GITHUB_REF##*/} into develop" --body "Automated PR from feature/${GITHUB_REF##*/} to develop"
+          else
+            echo "PR already exists"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Necessário para autenticar a ação
