@@ -5,9 +5,6 @@ on:
     branches:
       - "feature/*" # Permite execução automática quando push em branches "feature/*"
 
-permissions:
-  pull-requests: write
-
 jobs:
   create-pr:
     runs-on: ubuntu-latest
@@ -16,7 +13,7 @@ jobs:
       - name: Create Pull Request
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.MY_GITHUB_TOKEN  }}
           script: |
             const headBranch = context.ref.replace('refs/heads/', ''); // Obtém apenas o nome do branch
             const response = await github.rest.pulls.create({
