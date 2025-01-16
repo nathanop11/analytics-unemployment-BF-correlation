@@ -5,6 +5,9 @@ on:
     branches:
       - "feature/*" # Permite execução automática quando push em branches "feature/*"
 
+permissions:
+  pull-requests: write
+
 jobs:
   create-pr:
     runs-on: ubuntu-latest
