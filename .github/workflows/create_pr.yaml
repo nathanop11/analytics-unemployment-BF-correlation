@@ -1,0 +1,27 @@
+name: Create Pull Request develop
+
+on:
+  push:
+    branches:
+      - "feature/*" # Permite execução automática quando push em branches "feature/*"
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create Pull Request
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.MY_GITHUB_TOKEN  }}
+          script: |
+            const headBranch = context.ref.replace('refs/heads/', ''); // Obtém apenas o nome do branch
+            const response = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Automated PR for develop`,
+              head: headBranch, // Pega o nome do branch
+              base: 'develop',
+              body: 'This PR was created automatically by the workflow.',
+            });
+            console.log(`Pull request created: ${response.data.html_url}`);
